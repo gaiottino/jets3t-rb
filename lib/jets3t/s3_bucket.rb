@@ -1,3 +1,5 @@
+require 'tempfile'
+
 module Jar
   import org.jets3t.service.model.S3Bucket
   import org.jets3t.service.model.S3Object
@@ -16,16 +18,15 @@ module JetS3t
       @bucket = @s3_service.get_bucket(name)
     end
     
-    def put(*args)
-      if args.length == 1 && args[0].instance_of?(File)
-        java_file = java.io.File.new(args[0].path)
-        object = Jar::S3Object.new(java_file)
-      elsif args.length == 2
-        object = Jar::S3Object.new(args[0], args[1])
-      else
-        raise 'either put(file) or put(filename, data)'
-      end
-
+    def put(path, file)
+      java_file = java.io.File.new(file.path)
+      input_stream = java.io.FileInputStream.new(java_file)
+      
+      object = Jar::S3Object.new(path)
+      object.set_data_input_stream(input_stream)
+      object.set_content_length(java_file.length)
+      object.set_content_type('application/octet-stream')
+      
       @s3_service.put_object(@bucket, object)
     end
     

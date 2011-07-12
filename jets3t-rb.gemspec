@@ -9,13 +9,13 @@ Dir['ext/*.jar'].each { |jar| require jar }
 
 Gem::Specification.new do |s|
   s.name        = 'jets3t-rb'
-  s.version     = JetS3t::VERSION
+  s.version     = '1.0.1'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Daniel Gaiottino']
   s.email       = ['daniel@burtcorp.com']
   s.homepage    = 'http://github.com/gaiottino/jets3t-rb'
   s.summary     = %q{JRuby wrapper for JetS3t}
-  s.description = %q{JRuby wrapper for JetS3t}
+  s.description = %q{JRuby wrapper for JetS3t (http://jets3t.s3.amazonaws.com/)}
 
   s.rubyforge_project = 'jets3t-rb'
 
