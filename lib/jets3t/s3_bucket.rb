@@ -19,6 +19,7 @@ module JetS3t
     end
     
     def put(path, file)
+      clean_path(path)
       java_file = java.io.File.new(file.path)
       input_stream = java.io.FileInputStream.new(java_file)
       
@@ -26,12 +27,26 @@ module JetS3t
       object.set_data_input_stream(input_stream)
       object.set_content_length(java_file.length)
       object.set_content_type('application/octet-stream')
-      
-      @s3_service.put_object(@bucket, object)
+      data = @s3_service.put_object(@bucket, object)
     end
     
     def get(filename)
+      clean_path(filename)
       S3Object.new(@s3_service.get_object(@bucket, filename))
     end
+    
+    def delete(filename)
+      clean_path(filename)
+      @s3_service.delete_object(@bucket, filename)
+      true
+    rescue Exception => e
+      false
+    end
+    
+    private
+      # Removed leading /
+      def clean_path(path)
+        path.slice!(0) if path[0] == '/'
+      end
   end
 end
