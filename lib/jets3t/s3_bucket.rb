@@ -17,6 +17,10 @@ module JetS3t
       @s3_service = s3_service
       @bucket_name = name
       @bucket = @s3_service.get_bucket(name)
+      @stored_files = {}
+      list.each do | item |
+        @stored_files[item.get_name] = true
+      end
     end
     
     def put(path, file)
@@ -29,12 +33,12 @@ module JetS3t
       object.set_content_length(java_file.length)
       object.set_content_type('application/octet-stream')
       data = @s3_service.put_object(@bucket, object)
+      @stored_files[path] = true
     end
     
     def get(filename)
       clean_path(filename)
-      h = has_object(filename)
-      return nil if h.nil?
+      return nil unless @stored_files.has_key?(filename)
       begin
         S3Object.new(@s3_service.get_object(@bucket, filename))
       rescue Exception => e
