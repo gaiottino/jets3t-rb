@@ -15,6 +15,7 @@ module JetS3t
   class S3Bucket
     def initialize(s3_service, name)
       @s3_service = s3_service
+      @bucket_name = name
       @bucket = @s3_service.get_bucket(name)
     end
     
@@ -32,7 +33,13 @@ module JetS3t
     
     def get(filename)
       clean_path(filename)
-      S3Object.new(@s3_service.get_object(@bucket, filename))
+      h = has_object(filename)
+      return nil if h.nil?
+      begin
+        S3Object.new(@s3_service.get_object(@bucket, filename))
+      rescue Exception => e
+        nil
+      end
     end
     
     def delete(filename)
@@ -43,7 +50,16 @@ module JetS3t
       false
     end
     
+    def list
+      @bucket_list ||= @s3_service.list_objects(@bucket_name)
+    end
+    
     private
+      def has_object(path)
+        list.each do | item |
+          return item if item.get_name == path
+        end
+      end
       # Removed leading /
       def clean_path(path)
         path.slice!(0) if path[0] == '/'
