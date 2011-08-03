@@ -35,6 +35,15 @@ module JetS3t
       data = @s3_service.put_object(@bucket, object)
       @stored_files[path] = true
     end
+
+    def put_data(path, data)
+      clean_path(path)
+      object = Jar::S3Object.new(path, data)
+      object.set_content_length(data.size)
+      object.set_content_type('application/octet-stream')
+      data = @s3_service.put_object(@bucket, object)
+      @stored_files[path] = true
+    end
     
     def get(filename)
       clean_path(filename)
