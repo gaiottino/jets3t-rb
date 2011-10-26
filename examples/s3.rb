@@ -16,17 +16,22 @@ module JetS3t
 
   # # simple string data
   data = "Hello World!"
-  test_bucket.put('hello_world.txt', data)
+  test_bucket.put_data('hello_world.txt', data)
   
   # # file
   FILE_NAME = '/tmp/hello_world.file'
   File.open(FILE_NAME, 'w') {|f| f.write('Hello World!') }
   data = File.new(FILE_NAME)
-  test_bucket.put(data)
+  test_bucket.put('hello_world.file', data)
 
   object = test_bucket.get('hello_world.txt')
   p object.data
-  
+
   object = test_bucket.get('hello_world.file')
   p object.data
+
+  # this should fail and return nil
+  object = test_bucket.get('hello_world.txt.apa')
+  p object
+
 end
