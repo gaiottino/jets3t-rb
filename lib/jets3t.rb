@@ -1,6 +1,9 @@
 # encoding: utf-8
 
 require 'java'
+
+java.lang.System.set_property('org.apache.commons.logging.Log', 'org.apache.commons.logging.impl.NoOpLog')
+
 require 'ext/commons-httpclient-3.1'
 require 'ext/commons-logging-1.1.1'
 require 'ext/commons-codec-1.3'

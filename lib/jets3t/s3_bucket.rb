@@ -41,15 +41,7 @@ module JetS3t
     
     def get(filename)
       clean_path(filename)
-      begin
-        d = @s3_service.list_objects(@bucket, filename, nil)
-        if d && d.length > 0
-          S3Object.new(@s3_service.get_object(@bucket, filename))
-        end
-      rescue Exception => e
-        p e.message
-        nil
-      end
+      S3Object.new(@s3_service.get_object(@bucket, filename))
     end
     
     def delete(filename)
