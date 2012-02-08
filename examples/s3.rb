@@ -30,8 +30,12 @@ module JetS3t
   object = test_bucket.get('hello_world.file')
   p object.data
 
-  # this should fail and return nil
-  object = test_bucket.get('hello_world.txt.apa')
-  p object
+  # this should fail and raise error
+  begin
+    object = test_bucket.get('hello_world.txt.apa')
+    p object
+  rescue Exception => e
+    puts "S3 exception: #{e}"
+  end
 
 end
