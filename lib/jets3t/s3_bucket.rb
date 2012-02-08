@@ -13,6 +13,9 @@ module JetS3t
   end
   
   class S3Bucket
+    include_class org.jets3t.service.S3ServiceException
+    NO_SUCH_KEY = 'NoSuchKey'.freeze
+
     def initialize(s3_service, name)
       @s3_service = s3_service
       @bucket_name = name
@@ -42,6 +45,11 @@ module JetS3t
     def get(filename)
       clean_path(filename)
       S3Object.new(@s3_service.get_object(@bucket, filename))
+    rescue S3ServiceException => e
+      if e.cause.error_code != NO_SUCH_KEY
+        raise e
+      end
+      nil
     end
     
     def delete(filename)
