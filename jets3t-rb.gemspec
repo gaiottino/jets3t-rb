@@ -7,7 +7,7 @@ Dir['ext/*.jar'].each { |jar| require jar }
 
 Gem::Specification.new do |s|
   s.name        = 'jets3t-rb'
-  s.version     = '1.0.3'
+  s.version     = '1.0.4'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Daniel Gaiottino', 'David Tollmyr']
   s.email       = ['daniel@burtcorp.com', 'david@burtcorp.com']
