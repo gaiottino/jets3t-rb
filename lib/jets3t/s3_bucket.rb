@@ -72,7 +72,7 @@ module JetS3t
       end
       # Removed leading /
       def clean_path(path)
-        path.slice!(0) if path[0] == '/'
+        path.gsub(/^\//,'')
       end
   end
 end
