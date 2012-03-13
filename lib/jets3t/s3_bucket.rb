@@ -23,11 +23,10 @@ module JetS3t
     end
     
     def put(path, file)
-      clean_path(path)
       java_file = java.io.File.new(file.path)
       input_stream = java.io.FileInputStream.new(java_file)
       
-      object = Jar::S3Object.new(path)
+      object = Jar::S3Object.new(clean_path(filename))
       object.set_data_input_stream(input_stream)
       object.set_content_length(java_file.length)
       object.set_content_type('application/octet-stream')
@@ -43,8 +42,7 @@ module JetS3t
     end
     
     def get(filename)
-      clean_path(filename)
-      S3Object.new(@s3_service.get_object(@bucket, filename))
+      S3Object.new(@s3_service.get_object(@bucket, clean_path(filename)))
     rescue S3ServiceException => e
       if e.cause.error_code != NO_SUCH_KEY
         raise e
@@ -53,8 +51,7 @@ module JetS3t
     end
     
     def delete(filename)
-      clean_path(filename)
-      @s3_service.delete_object(@bucket, filename)
+      @s3_service.delete_object(@bucket, clean_path(filename))
       true
     rescue Exception => e
       false
