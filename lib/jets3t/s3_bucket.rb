@@ -22,22 +22,22 @@ module JetS3t
       @bucket = @s3_service.get_bucket(name)
     end
     
-    def put(path, file)
+    def put(path, file, mimetype = 'application/octet-stream')
       java_file = java.io.File.new(file.path)
       input_stream = java.io.FileInputStream.new(java_file)
       
       object = Jar::S3Object.new(clean_path(filename))
       object.set_data_input_stream(input_stream)
       object.set_content_length(java_file.length)
-      object.set_content_type('application/octet-stream')
+      object.set_content_type(mimetype)
       data = @s3_service.put_object(@bucket, object)
     end
 
-    def put_data(path, data)
+    def put_data(path, data, mimetype = 'application/octet-stream')
       clean_path(path)
       object = Jar::S3Object.new(path, data)
       object.set_content_length(data.size)
-      object.set_content_type('application/octet-stream')
+      object.set_content_type(mimetype)
       data = @s3_service.put_object(@bucket, object)
     end
     
