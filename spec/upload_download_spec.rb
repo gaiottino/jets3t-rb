@@ -1,3 +1,6 @@
+require_relative 'spec_helper'
+
+
 module JetS3t
 
   describe "JetS3t upload/download" do

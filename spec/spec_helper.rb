@@ -1,7 +1,9 @@
+$: << File.expand_path('../../lib', __FILE__)
 
 require 'ap'
 require 'jets3t'
 require 'fileutils'
+require 'tmpdir'
 
 module Uuid
   def self.generate
