@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
 
   s.add_development_dependency  'awesome_print',      '~> 1.0.2'
-  s.add_development_dependency  'fuubar',             '~> 0.0.0'
+  s.add_development_dependency  'fuubar',             '~> 1.0.0'
   s.add_development_dependency  'rspec',              '~> 2.8.0'
 end
