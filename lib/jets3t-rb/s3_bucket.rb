@@ -32,19 +32,14 @@ module JetS3t
     def put(path, file, mimetype = 'application/octet-stream')
       try_raise_uninitialized
       input_stream = file.to_inputstream
-      object = Jar::S3Object.new(clean_path(filename))
-      object.set_data_input_stream(input_stream)
-      object.set_content_length(file.size)
-      object.set_content_type(mimetype)
-      data = @s3_service.put_object(@bucket, object)
+      object = Jar::S3Object.new(clean_path(path))
+      data = common_put object, file.size, mimetype, input_stream 
     end
 
     def put_data(path, data, mimetype = 'application/octet-stream')
       try_raise_uninitialized
       object = Jar::S3Object.new(clean_path(path), data)
-      object.set_content_length(data.size)
-      object.set_content_type(mimetype)
-      data = @s3_service.put_object(@bucket, object)
+      data = common_put object, data.size, mimetype
     end
     
     def get(filename)
@@ -62,10 +57,7 @@ module JetS3t
       data = nil
       File.open(local_filename) do |f|
         object = Jar::S3Object.new(clean_path(filename))
-        object.set_data_input_stream(f.to_inputstream)
-        object.set_content_length(f.size)
-        object.set_content_type(mimetype)
-        data = @s3_service.put_object(@bucket, object)
+        data = common_put object, f.size, mimetype, f.to_inputstream
       end
       data
     end
@@ -102,6 +94,13 @@ module JetS3t
     
     private
 
+    def common_put object, size, mimetype, stream = nil
+      object.set_data_input_stream(stream) if stream
+      object.set_content_length(size)
+      object.set_content_type(mimetype)
+      @s3_service.put_object(@bucket, object)
+    end
+
     def try_raise_uninitialized
       raise UninitializedBucketException.new unless @bucket
     end
@@ -119,7 +118,7 @@ module JetS3t
 
     # Removed leading /
     def clean_path(path)
-      path.gsub(/^\//,'')
+      path.gsub %r[^/],''
     end
   end
 end

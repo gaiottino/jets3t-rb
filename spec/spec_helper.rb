@@ -1,6 +1,6 @@
 
 require 'ap'
-require 'jets3t'
+require 'jets3t-rb'
 require 'fileutils'
 
 module Uuid

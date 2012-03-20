@@ -2,10 +2,13 @@
 #   import org.jets3t.service.model.S3Object
 # end
 
+require 'delegate'
+
 module JetS3t
-  class S3Object
+  class S3Object < SimpleDelegator
     def initialize(s3_object_impl)
       @s3_object = s3_object_impl
+      super @s3_object
     end
     
     def data
