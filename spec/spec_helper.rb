@@ -19,10 +19,18 @@ def resource_dir
   File.expand_path("../resources", __FILE__)
 end
 
+def get_credentials_from_awssecret
+  aws_secret_path = '~/.awssecret'.freeze
+  full_secret_path = File.expand_path(aws_secret_path)
+  return [nil, nil] unless File.exist?(full_secret_path)
+
+  File.readlines(full_secret_path).map(&:chomp)
+end
+
 def get_credentials_from_s3cmd_cfg
   aws_secret_path = '~/.s3cfg'
   full_secret_path = File.expand_path(aws_secret_path)
-  raise "#{aws_secret_path} not found" unless File.exist?(full_secret_path)
+  return [nil, nil] unless File.exist?(full_secret_path)
 
   access_key_id, secret_access_key = '', ''
 
@@ -36,5 +44,13 @@ def get_credentials_from_s3cmd_cfg
 end
 
 def build_credentials
-  JetS3t::AWSCredentials.new(*get_credentials_from_s3cmd_cfg)
+  id, key = get_credentials_from_awssecret
+  if id && key
+    return JetS3t::AWSCredentials.new(id, key)
+  end
+  id, key = get_credentials_from_s3cmd_cfg
+  if id && key
+    return JetS3t::AWSCredentials.new(id, key)
+  end
+  raise "Could not create JetS3t::AWSCredentials, no suitable files"
 end
