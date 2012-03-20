@@ -11,29 +11,34 @@ module JetS3t
     EUROPE          = Jar::S3Bucket::LOCATION_EUROPE
     US              = Jar::S3Bucket::LOCATION_US
   end
-  
+
   UninitializedBucketException = Class.new(StandardError)
 
   class S3Bucket
     include_class org.jets3t.service.S3ServiceException
     NO_SUCH_KEY = 'NoSuchKey'.freeze
 
+    # TODO, user can supply location
     def initialize(s3_service, name)
       @s3_service = s3_service
       @bucket_name = name
-      @bucket = @s3_service.get_bucket(name) || create
+      setup or create
       try_raise_uninitialized
     end
-    
+
+    def setup
+      @bucket = @s3_service.get_bucket(@bucket_name)
+    end
+
     def create
-      @bucket = @s3_service.create_bucket @bucket_name, Location::US
+      @bucket = @s3_service.create_bucket(@bucket_name, Location::US)
     end
 
     def put(path, file, mimetype = 'application/octet-stream')
       try_raise_uninitialized
       input_stream = file.to_inputstream
       object = Jar::S3Object.new(clean_path(path))
-      data = common_put object, file.size, mimetype, input_stream 
+      data = common_put object, file.size, mimetype, input_stream
     end
 
     def put_data(path, data, mimetype = 'application/octet-stream')
@@ -41,7 +46,7 @@ module JetS3t
       object = Jar::S3Object.new(clean_path(path), data)
       data = common_put object, data.size, mimetype
     end
-    
+
     def get(filename)
       try_raise_uninitialized
       S3Object.new(@s3_service.get_object(@bucket, clean_path(filename)))
@@ -52,7 +57,7 @@ module JetS3t
       nil
     end
 
-    def upload local_filename, filename, mimetype = 'application/octet-stream'
+    def upload(local_filename, filename, mimetype = 'application/octet-stream')
       try_raise_uninitialized
       data = nil
       File.open(local_filename) do |f|
@@ -62,7 +67,7 @@ module JetS3t
       data
     end
 
-    def download filename, local_filename
+    def download(filename, local_filename)
       try_raise_uninitialized
       count = 0
       s3_channel = get_as_nio_channel(filename)
@@ -74,7 +79,7 @@ module JetS3t
       end
       count
     end
-    
+
     def destroy
       return unless self.list.size == 0
       @s3_service.delete_bucket(@bucket)
@@ -87,14 +92,14 @@ module JetS3t
     rescue Exception => e
       false
     end
-    
+
     def list
       @s3_service.list_objects(@bucket_name)
     end
-    
+
     private
 
-    def common_put object, size, mimetype, stream = nil
+    def common_put(object, size, mimetype, stream = nil)
       object.set_data_input_stream(stream) if stream
       object.set_content_length(size)
       object.set_content_type(mimetype)
@@ -105,7 +110,7 @@ module JetS3t
       raise UninitializedBucketException.new unless @bucket
     end
 
-    def get_as_nio_channel filename
+    def get_as_nio_channel(filename)
       s3o = self.get(filename) or return
       s3o.io_channel
     end
