@@ -4,8 +4,8 @@ require_relative 'spec_helper'
 module JetS3t
 
   describe "JetS3t exceptions" do
-    
-    let(:bucket_name)       { 'jets3t-spec-11' }
+
+    let(:bucket_name)       { test_bucket_name }
     let(:service)           { RestS3Service.new(build_credentials) }
     let(:spec_bucket)       { service.bucket(bucket_name) }
 

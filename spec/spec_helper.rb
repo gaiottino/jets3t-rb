@@ -17,6 +17,10 @@ def apr(what, header='')
   ap "="*(header.size + 6)
 end
 
+def test_bucket_name
+  "jets3t-spec-#{Uuid.generate}"
+end
+
 def resource_dir
   File.expand_path("../resources", __FILE__)
 end

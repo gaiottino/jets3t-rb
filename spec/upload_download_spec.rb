@@ -4,8 +4,8 @@ require_relative 'spec_helper'
 module JetS3t
 
   describe "JetS3t upload/download" do
-    
-    let(:bucket_name)       { 'jets3t-spec-1' }
+
+    let(:bucket_name)       { test_bucket_name }
     let(:service)           { RestS3Service.new(build_credentials) }
     let(:spec_bucket)       { service.bucket(bucket_name) }
     let(:resource)          { File.join resource_dir, "silence-44-s.flac" }
@@ -32,7 +32,7 @@ module JetS3t
       subject           { results }
 
       it "after upload S3Object contains metadata and the list has the file" do
-        
+
         metadata = subject[:uploaded][0].metadata_map
         metadata["Content-Length"].should == size
 
@@ -52,7 +52,7 @@ module JetS3t
       subject { results }
 
       it "after download S3Object contains metadata and the downloaded size" do
-        
+
         metadata = subject[:uploaded][0].metadata_map
 
         subject[:downloaded][0].should == metadata["Content-Length"].to_i
