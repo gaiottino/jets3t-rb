@@ -1,6 +1,6 @@
 
 require 'ap'
-require 'jets3t-rb'
+require 'jets3t'
 require 'fileutils'
 
 module Uuid
@@ -20,7 +20,7 @@ def resource_dir
 end
 
 def get_credentials_from_awssecret
-  aws_secret_path = '~/.awssecret'.freeze
+  aws_secret_path = '~/.awssecret'
   full_secret_path = File.expand_path(aws_secret_path)
   return [nil, nil] unless File.exist?(full_secret_path)
 
