@@ -28,7 +28,7 @@ module JetS3t
 
       subject           { results }
 
-      it "after upload S3Object contains metadata and the listing has the file" do
+      it "after upload S3Object contains metadata and the list has the file" do
         
         metadata = subject[:uploaded][0].metadata_map
         metadata["Content-Length"].should == size
@@ -40,7 +40,7 @@ module JetS3t
 
     context "download binary (audio) file" do
 
-      let(:download_file) { File.join download_dir, Uuid.generate }
+      let(:download_file) { File.join(download_dir, Uuid.generate) }
 
       before do
         results[:downloaded][0] = spec_bucket.download(target, download_file)
@@ -48,7 +48,7 @@ module JetS3t
 
       subject { results }
 
-      it "after download S3Object contains metadata and the listing has the file" do
+      it "after download S3Object contains metadata and the downloaded size" do
         
         metadata = subject[:uploaded][0].metadata_map
 
